@@ -6,28 +6,28 @@ set -ex
 
 mkdir -p tmp-files/
 
-# # get various files from engrafo
-# docker run -it --rm -v $PWD:/workdir engrafo \
-#     cp -r \
-#         /app/latexml/packages/ \
-#         /app/latexml/engrafo.ltxml \
-#         /workdir/tmp-files/
-# docker run -it --rm -v $PWD:/workdir engrafo \
-#     cp -r /app/dist/css/index.css /workdir/tmp-files/index.css
-# docker run -it --rm -v $PWD:/workdir engrafo \
-#     cp -r /app/dist/javascript/index.js /workdir/tmp-files/index.js
-# # TODO: rename index.css and index.js?
+# get various files from engrafo
+docker run -it --rm -v $PWD:/workdir engrafo \
+    cp -r \
+        /app/latexml/packages/ \
+        /app/latexml/engrafo.ltxml \
+        /workdir/tmp-files/
+docker run -it --rm -v $PWD:/workdir engrafo \
+    cp -r /app/dist/css/index.css /workdir/tmp-files/index.css
+docker run -it --rm -v $PWD:/workdir engrafo \
+    cp -r /app/dist/javascript/index.js /workdir/tmp-files/index.js
+# TODO: rename index.css and index.js?
 
-# # TeX -> XML
-# docker run -it --rm -v $PWD:/workdir latexml \
-#    latexml \
-#        --path=tmp-files/packages/ \
-#        --preload=tmp-files/engrafo.ltxml \
-#        --destination=web/index.xml \
-#        tex/main.tex
+# TeX -> XML
+docker run -it --rm -v $PWD:/workdir latexml \
+   latexml \
+       --path=tmp-files/packages/ \
+       --preload=tmp-files/engrafo.ltxml \
+       --destination=web/index.xml \
+       tex/main.tex
 
-# # fix some stuff (currently just making conclusion not in Part II)
-# python scripts/fix_xml.py web/index.xml
+# fix some stuff (currently just making conclusion not in Part II)
+python scripts/fix_xml.py web/index.xml
 
 # XML -> HTML
 docker run -it --rm -v $PWD:/workdir latexml \
@@ -52,5 +52,5 @@ for file in $(ls web/*.html); do
     docker run -it --rm -v $PWD:/workdir -w /workdir engrafo \
        engrafo \
        $file
-    #python scripts/fix_html.py $file
+    python scripts/fix_html.py $file
 done
