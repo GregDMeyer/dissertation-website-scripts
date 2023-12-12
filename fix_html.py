@@ -2,27 +2,24 @@
 This script takes the HTML produced by latexmlpost and makes some changes to it.
 '''
 
+# we use regex to parse HTML, despite the fact that it
+# is generally not recommended:
+# https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454
+
 from sys import argv
-import bs4
+import re
 
+def replace(match):
+    index = match.group(1)
+    if index.startswith('I'):
+        return 'Part '+index+'</a'
+
+    return 'Chapter '+index+'</a'
+
+output_lines = []
 with open(argv[1]) as f:
-    tree = bs4.BeautifulSoup(f, 'html.parser')
-
-for a_node in tree.find_all('a'):
-    if 'rel' not in a_node.attrs:
-        continue
-
-    if not('up' in a_node['rel'] or a_node['title'].startswith('Part') or a_node['title'].startswith('Chapter')):
-        continue
-
-    print(a_node)
-
-    if a_node['title'].startswith('Part') or a_node['title'].startswith('Chapter'):
-        new_content = ' '.join(a_node['title'].split(' ')[:2])
-    else:     # top level
-        new_content = 'Top level'
-    a_node.span.span.decompose()
-    a_node.span.string = new_content
+    for line in f:
+        output_lines.append(re.sub(r'<span class="ltx_tag ltx_tag_ref">([I0-9]*) </span>.*?</span></a', replace, line))
 
 with open(argv[1], 'w') as f:
-    f.write(tree.prettify(formatter='html5'))
+    f.write(''.join(output_lines))
