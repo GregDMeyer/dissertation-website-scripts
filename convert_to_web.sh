@@ -13,15 +13,23 @@ docker run -it --rm -v $PWD:/workdir engrafo \
         /app/latexml/engrafo.ltxml \
         /workdir/tmp-files/
 docker run -it --rm -v $PWD:/workdir engrafo \
-    cp -r /app/dist/css/index.css /workdir/tmp-files/index.css
+    cp -r /app/dist/css/index.css /workdir/tmp-files/index-tmp.css
 docker run -it --rm -v $PWD:/workdir engrafo \
     cp -r /app/dist/javascript/index.js /workdir/tmp-files/index.js
 # TODO: rename index.css and index.js?
+
+# put my custom verbatim code there too
+cp scripts/*.xsl tmp-files/
+
+# add extra css
+cat scripts/extra.css tmp-files/index-tmp.css > tmp-files/index.css
+cp scripts/extra.js tmp-files/
 
 # TeX -> XML
 docker run -it --rm -v $PWD:/workdir latexml \
    latexml \
        --path=tmp-files/packages/ \
+       --path=tmp-files/ \
        --preload=tmp-files/engrafo.ltxml \
        --destination=web/index.xml \
        tex/main.tex
@@ -37,9 +45,14 @@ docker run -it --rm -v $PWD:/workdir latexml \
         --urlstyle=file \
         --mathtex \
         --javascript='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js' \
+        --javascript='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/highlight.min.js' \
+        --javascript='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@latest/build/languages/julia.min.js' \
+        --javascript='tmp-files/extra.js' \
         --timestamp=0 \
         --nodefaultresources \
         --path=tmp-files/packages/ \
+        --path=tmp-files/ \
+        --stylesheet=tmp-files/verbatim_precode.xsl \
         --javascript=tmp-files/index.js \
         --css=tmp-files/index.css \
         --xsltparameter=SIMPLIFY_HTML:true \
