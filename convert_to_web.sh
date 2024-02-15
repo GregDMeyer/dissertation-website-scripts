@@ -26,7 +26,7 @@ cat scripts/extra.css tmp-files/index-tmp.css > tmp-files/index.css
 cp scripts/extra.js tmp-files/
 
 # TeX -> XML
-docker run -it --rm -v $PWD:/workdir latexml \
+docker run -it --rm -v $PWD:/workdir latexml-git \
    latexml \
        --path=tmp-files/packages/ \
        --path=tmp-files/ \
@@ -38,7 +38,7 @@ docker run -it --rm -v $PWD:/workdir latexml \
 python scripts/fix_xml.py web/index.xml
 
 # XML -> HTML
-docker run -it --rm -v $PWD:/workdir latexml \
+docker run -it --rm -v $PWD:/workdir latexml-git \
     latexmlpost \
         --format=html5 \
         --splitat=chapter \
