@@ -28,6 +28,7 @@ cp scripts/extra.js tmp-files/
 # TeX -> XML
 docker run -it --rm -v $PWD:/workdir latexml-git \
    latexml \
+       --noparse \
        --path=tmp-files/packages/ \
        --path=tmp-files/ \
        --preload=tmp-files/engrafo.ltxml \

@@ -24,6 +24,8 @@ with open(filename) as f:
         else:
             next_after_chapter = False
 
+        line = line.replace('%&#10;', '')
+
         result_lines.append(line)
 
 # write it back out to the input file
